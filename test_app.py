@@ -1,7 +1,17 @@
-from app import get_max
+import unittest
+from appointment import app
 
-def test_max_value():
-    assert get_max(10, 5) == 10
-    assert get_max(-1, -5) == -1
-    assert get_max(0, 0) == 0
-    assert get_max(3.5, 2.8) == 3.5
+class AppointmentTests(unittest.TestCase):
+    def setUp(self):
+        self.client = app.test_client()
+
+    def test_booking_success(self):
+        response = self.client.post("/book", json={
+            "car_plate": "XYZ123",
+            "date": "2025-10-28",
+            "time": "10:00",
+            "service_ids": [1],
+            "notes": "Routine check"
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json["status"], "success")

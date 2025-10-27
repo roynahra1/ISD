@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Book Appointment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📅 Book a Car Service Appointment</h2>
+    <form id="appointmentForm">
+      <label for="car_plate">Car Plate Number</label>
+      <input type="text" id="car_plate" name="car_plate" required />
+
+      <label for="date">Appointment Date</label>
+      <input type="date" id="date" name="date" required />
+
+      <label for="time">Appointment Time</label>
+      <select name="time" id="time" required>
+        <option value="">-- Select a time slot --</option>
+        <option value="07:00">07:00</option>
+        <option value="07:30">07:30</option>
+        <option value="08:00">08:00</option>
+        <option value="08:30">08:30</option>
+        <option value="09:00">09:00</option>
+        <option value="09:30">09:30</option>
+        <option value="10:00">10:00</option>
+        <option value="10:30">10:30</option>
+        <option value="11:00">11:00</option>
+        <option value="11:30">11:30</option>
+        <option value="12:00">12:00</option>
+        <option value="12:30">12:30</option>
+        <option value="13:00">13:00</option>
+        <option value="13:30">13:30</option>
+        <option value="14:00">14:00</option>
+        <option value="14:30">14:30</option>
+        <option value="15:00">15:00</option>
+        <option value="15:30">15:30</option>
+        <option value="16:00">16:00</option>
+        <option value="16:30">16:30</option>
+        <option value="17:00">17:00</option>
+        <option value="17:30">17:30</option>
+        <option value="18:00">18:00</option>
+        <option value="18:30">18:30</option>
+      </select>
+
+      <label for="service">Select Service</label>
+      <select name="service" id="service" required>
+        <option value="">-- Choose a service --</option>
+        <option value="1">Oil Change</option>
+        <option value="2">Tire Rotation</option>
+        <option value="3">Brake Inspection</option>
+        <option value="4">Battery Check</option>
+        <option value="5">Full Diagnostic</option>
+      </select>
+
+      <label for="notes">Notes (optional)</label>
+      <textarea id="notes" name="notes" placeholder="e.g. Bring spare tire, check engine light..."></textarea>
+
+      <button type="submit">Book Appointment</button>
+    </form>
+    <div class="message" id="responseMessage"></div>
+  </div>
+
+  <script>
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const selectedService = form.service.value;
+
+      const data = {
+        car_plate: form.car_plate.value,
+        date: form.date.value,
+        time: form.time.value,
+        service_ids: [parseInt(form.service.value)],
+        notes: form.notes.value
+      };
+
+      fetch('/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(response => {
+        const msg = document.getElementById('responseMessage');
+        msg.textContent = response.message;
+        msg.style.color = response.status === 'success' ? 'green' : 'red';
+        if (response.status === 'success') form.reset();
+      })
+      .catch(err => {
+        console.error('Booking failed:', err);
+        document.getElementById('responseMessage').textContent = '⚠️ Error booking appointment';
+        document.getElementById('responseMessage').style.color = 'red';
+      });
+    });
+  </script>
+</body>
+</html>
