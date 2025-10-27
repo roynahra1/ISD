@@ -1,5 +1,5 @@
 import unittest
-from appointment import app
+from app import app
 
 class AppointmentTests(unittest.TestCase):
     def setUp(self):
